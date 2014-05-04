@@ -1,0 +1,8 @@
+name: testDart
+description: A sample web application
+dependencies:
+  browser: any
+  unittest: any
+dev_dependencies:
+  hetima:
+    path: /Users/kiyohiro/dart/hetima/

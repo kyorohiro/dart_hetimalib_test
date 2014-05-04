@@ -1,0 +1,7 @@
+name: hetimalib_test
+description: A sample web application
+dependencies:
+  browser: any
+  hetima:
+    git: git@github.com:kyorohiro/dart_hetimalib.git
+  unittest: any
