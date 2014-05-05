@@ -8,6 +8,7 @@ void main() {
 class Server {
   String _rootpath = "../..";
   io.WebSocket _websocket;
+  int _port = 8081;
 
   void onWSReceive(io.WebSocket websocket, message) {
 //     if (message is type.ByteBuffer) {
@@ -47,7 +48,7 @@ class Server {
     
     dir.list().listen((io.FileSystemEntity e) {
       res.write(
-          ("<a href=."+e.path.substring(_rootpath.length)+">"+e.path+"</a><br>"));      
+          ("<a href=http://"+req.headers.host+":"+_port.toString()+""+e.path.substring(_rootpath.length)+">"+e.path+"</a><br>"));      
     }).onDone((){
       res.close();      
     });
@@ -70,15 +71,15 @@ class Server {
 
   void startHttpServer() {
     io.HttpServer
-    .bind("127.0.0.1", 8081)
+    .bind("127.0.0.1", _port)
     .then((io.HttpServer server) {
       server
       .listen((io.HttpRequest request) {
+        print("onListen...:" + request.uri.path+","+request.headers.host);
         if (request.uri.path == "/websocket") {
           io.WebSocketTransformer.upgrade(request).then(handleWebsocket);
           return;
         }
-        print("onListen...:" + request.uri.path);
         String path = _rootpath + request.uri.path;
         io.FileSystemEntity.isDirectory(path).then((isDir) {
           if (isDir == true) {
