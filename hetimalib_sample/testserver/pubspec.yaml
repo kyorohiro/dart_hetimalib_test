@@ -1,2 +1,5 @@
 name: test_server
 description: A sample command-line application
+dependencies:
+  hetima:
+    path: /Users/kiyohiro/dart/git/dart_hetimalib

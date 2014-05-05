@@ -1,8 +1,12 @@
 import 'dart:io' as io;
 import 'dart:typed_data' as type;
+import 'package:hetima/hetima_sv.dart' as hetima;
+
 void main() {
   Server server = new Server();
   server.startHttpServer();
+  hetima.SignalServer sigserver = new hetima.SignalServer();
+  sigserver.start();
 }
 
 class Server {
@@ -33,7 +37,6 @@ class Server {
         onError:(){
           onWSError(websocket);
         });
-    websocket.close();
   }
 
   void handleError(io.HttpRequest req, io.HttpResponse res) {
