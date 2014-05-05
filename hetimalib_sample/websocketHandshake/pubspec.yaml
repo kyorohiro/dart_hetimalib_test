@@ -1,4 +1,4 @@
-name: testDart
+name: websocket_handshake
 description: A sample web application
 dependencies:
   browser: any
