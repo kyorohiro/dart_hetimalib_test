@@ -40,7 +40,21 @@ void test_bencode() {
       unit.expect(1024, list[1]);
     }
   });
+  unit.test("bencode: join", () {
+      {
+        var pack = {};
+        pack["action"] = "join";
+        pack["mode"] = "broadcast";
+        pack["id"] = hetima.Uuid.createUUID();
+        type.Uint8List out = hetima.Bencode.encode(pack);
 
+        unit.expect("d6:action4:join4:mode9:broadcast2:id36:"+pack["id"].toString()+"e", convert.UTF8.decode(out.toList()));
+        Map m = hetima.Bencode.decode(out);
+        unit.expect(pack["action"].toString(), convert.UTF8.decode(m["action"]).toString());
+        unit.expect(pack["mode"].toString(), convert.UTF8.decode(m["mode"]).toString());
+        unit.expect(pack["id"].toString(), convert.UTF8.decode(m["id"]).toString());
+      }
+  });
   unit.test("bencode: dictionary", () {
     {
       Map<String, Object> m = new Map();

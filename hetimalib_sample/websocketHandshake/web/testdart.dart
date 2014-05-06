@@ -7,9 +7,10 @@ hetima.Caller caller = new hetima.Caller("test");
 html.TextAreaElement localsdp = new html.Element.textarea();
 html.TextAreaElement remotesdp = new html.Element.textarea();
 AdapterSignalClient signalclient = new AdapterSignalClient();
+String uuid = hetima.Uuid.createUUID();
 
 void main() {
-  print(""+hetima.Uuid.createUUID());
+  print(""+ uuid);
   html.Element testButton  = new html.Element.html(
   '<input id="testbutton" type="button" value="test"> ');
   html.Element offerButton = new html.Element.html(
@@ -62,7 +63,8 @@ void onClickTestButton(html.MouseEvent event) {
   print("--clicked test button");
 // 
   if(hetima.SignalClient.OPEN == client.getState()) {
-    client.sendText("hello");    
+    client.sendJoin(uuid);
+//    client.sendText("hello");    
   } else {
     client.init();
   }
