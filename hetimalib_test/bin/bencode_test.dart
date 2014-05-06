@@ -40,4 +40,20 @@ void test_bencode() {
       unit.expect(1024, list[1]);
     }
   });
+
+  unit.test("bencode: dictionary", () {
+    {
+      Map<String, Object> m = new Map();
+      m["test"] = "test";
+      m["value"] = 1024;
+      type.Uint8List out = hetima.Bencode.encode(m);
+      unit.expect("d4:test4:test5:valuei1024ee", convert.UTF8.decode(out.toList()));
+
+      Map me = hetima.Bencode.decode(out);
+      unit.expect("test", convert.UTF8.decode(me["test"].toList()));
+      unit.expect(1024, me["value"]);
+
+    }
+  });
+
 }
