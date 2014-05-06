@@ -4,6 +4,7 @@ import 'dart:typed_data' as type;
 import 'dart:convert' as convert;
 
 void test_bencode() {
+
   unit.test("bencode: string", () {
     type.Uint8List out = hetima.Bencode.encode("test");
     unit.expect("4:test", convert.UTF8.decode(out.toList()));
@@ -26,4 +27,17 @@ void test_bencode() {
     }
   });
 
+  unit.test("bencode: list", () {
+    {
+      List l = new List();
+      l.add("test");
+      l.add(1024);
+      type.Uint8List out = hetima.Bencode.encode(l);
+      unit.expect("l4:testi1024ee", convert.UTF8.decode(out.toList()));
+
+      List list = hetima.Bencode.decode(out);
+      unit.expect("test", convert.UTF8.decode(list[0].toList()));
+      unit.expect(1024, list[1]);
+    }
+  });
 }
