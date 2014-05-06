@@ -86,10 +86,6 @@ void onSetAnswerButton(html.MouseEvent event) {
   signalclient.onReceive(caller, "answer", remotesdp.value);
 }
 
-class CallerEventListener implements hetima.CallerEventListener {
-    
-}
-
 class AdapterSignalClient extends hetima.CallerExpectSignalClient {
   void send(hetima.Caller caller, String toUUid, String from, String type, String data) {
     print("signal client send");

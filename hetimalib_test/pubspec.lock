@@ -7,11 +7,10 @@ packages:
     version: "0.10.0+2"
   hetima:
     description:
-      ref: null
-      resolved-ref: c4df338f071395e81f5253544424aeb8c2a011dd
-      url: "git@github.com:kyorohiro/dart_hetimalib.git"
-    source: git
-    version: "0.0.001"
+      path: "/Users/kiyohiro/dart/git/dart_hetimalib"
+      relative: false
+    source: path
+    version: "0.0.003"
   matcher:
     description: matcher
     source: hosted
