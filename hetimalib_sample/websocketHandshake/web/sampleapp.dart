@@ -1,28 +1,25 @@
 import 'dart:html' as html;
-import 'package:hetima/hetima.dart'as hetima;
-import 'package:hetima/hetima_cl.dart'as hetima;
+import 'package:hetima/hetima.dart'as hetima_common;
+import 'package:hetima/hetima_cl.dart'as hetima_cl;
 
-hetima.SignalClient client = new hetima.SignalClient();
-hetima.Caller caller = new hetima.Caller("test");
+hetima_cl.SignalClient client = new hetima_cl.SignalClient();
+hetima_cl.Caller caller = new hetima_cl.Caller("test");
 AdapterSignalClient signalclient = new AdapterSignalClient();
-String myuuid = hetima.Uuid.createUUID();
+String myuuid = hetima_common.Uuid.createUUID();
 html.SelectElement selectElement = new html.Element.select();
 
 
 void main() {
   print(""+ myuuid);
-  html.Element testButton  = new html.Element.html(
-  '<input id="testbutton" type="button" value="test"> ');
+  html.DivElement myid = new html.Element.html("<div>"+myuuid+"</div>");
+  html.Element joinButton  = new html.Element.html(
+  '<input id="joinbutton" type="button" value="join"> ');
   html.Element offerButton = new html.Element.html(
       '<input id="offerbutton" type="button" value="offer"> ');
-  html.Element answerbutton = new html.Element.html(
-      '<input id="answerbutton" type="button" value="answer"> ');
-  html.Element setremotesdpForAnswer = new html.Element.html(
-      '<input id="setrenotesdp_answer" type="button" value="setrenotesdp(answer)"> ');
-  html.Element setremotesdpForOffer = new html.Element.html(
-      '<input id="setrenotesdp_offer" type="button" value="setrenotesdp(offer)"> ');
 
-  html.document.body.children.add(testButton);
+  html.document.body.children.add(myid);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(joinButton);
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(selectElement);
   html.document.body.children.add(new html.Element.br());
@@ -34,18 +31,9 @@ void main() {
 
   html.document.body.children.add(offerButton);
   html.document.body.children.add(new html.Element.br());
-  html.document.body.children.add(answerbutton);
-  html.document.body.children.add(new html.Element.br());
-  html.document.body.children.add(setremotesdpForAnswer);
-  html.document.body.children.add(new html.Element.br());
-  html.document.body.children.add(setremotesdpForOffer);
-  html.document.body.children.add(new html.Element.br());
 
-  testButton.onClick.listen(onClickTestButton);
+  joinButton.onClick.listen(onClickJoinButton);
   offerButton.onClick.listen(onClickOfferButton);
-  answerbutton.onClick.listen(onClickAnswerButton);
-  setremotesdpForAnswer.onClick.listen(onSetAnswerButton);
-  setremotesdpForOffer.onClick.listen(onSetOfferButton);
   
   caller
   .setSignalClient(signalclient)
@@ -55,7 +43,7 @@ void main() {
   client.addEventListener(new SignalClientListenerImple());
 }
 
-class SignalClientListenerImple implements hetima.SignalClientListener {
+class SignalClientListenerImple implements hetima_cl.SignalClientListener {
   void updatePeer(List<String> uuidList) {
     updateItem(uuidList);
   }
@@ -66,7 +54,7 @@ List<String> findedUuidList = new List();
 void updateItem(List<String> newUuidList) {
   for(String u in newUuidList) {
     if(!findedUuidList.contains(u) && myuuid != u) {
-      findedUuidList.addAll(newUuidList);
+      findedUuidList.add(u);
     }
   }
   for(html.OptionElement l in  selectElement.options) {
@@ -80,16 +68,14 @@ void updateItem(List<String> newUuidList) {
   }
 }
 
-void onClickTestButton(html.MouseEvent event) {
+void onClickJoinButton(html.MouseEvent event) {
   print("--clicked test button");
 // 
-  if(hetima.SignalClient.OPEN == client.getState()) {
+  if(hetima_cl.SignalClient.OPEN == client.getState()) {
     client.sendJoin(myuuid);
-//    client.sendText("hello");    
   } else {
-    client.init();
+    client.connect().then((html.Event e){client.sendJoin(myuuid);});
   }
-  //caller.createOffer();
 }
 
 void onClickOfferButton(html.MouseEvent event) {
@@ -107,8 +93,8 @@ void onSetAnswerButton(html.MouseEvent event) {
   print("--clicked set answer button¥n"); 
 }
 
-class AdapterSignalClient extends hetima.CallerExpectSignalClient {
-  void send(hetima.Caller caller, String toUUid, String from, String type, String data) {
+class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
+  void send(hetima_cl.Caller caller, String toUUid, String from, String type, String data) {
     print("signal client send");
      {
         var pack = {};
@@ -118,7 +104,7 @@ class AdapterSignalClient extends hetima.CallerExpectSignalClient {
         client.unicastPackage(toUUid, from, pack);
      }
   }
-  void onReceive(hetima.Caller caller, String type, String data) {
+  void onReceive(hetima_cl.Caller caller, String type, String data) {
     print("onreceive " + type+","+data);
     super.onReceive(caller, type, data);
   }
