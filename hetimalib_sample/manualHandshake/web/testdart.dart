@@ -1,7 +1,8 @@
 import 'dart:html' as html;
 import 'package:hetima/hetima.dart'as hetima;
+import 'package:hetima/hetima_cl.dart'as hetima_cl;
 
-hetima.Caller caller = new hetima.Caller("test");
+hetima_cl.Caller caller = new hetima_cl.Caller("test");
 html.TextAreaElement localsdp = new html.Element.textarea();
 html.TextAreaElement remotesdp = new html.Element.textarea();
 AdapterSignalClient signalclient = new AdapterSignalClient();
@@ -60,20 +61,20 @@ void onClickAnswerButton(html.MouseEvent event) {
 }  
 void onSetOfferButton(html.MouseEvent event) {
   print("--clicked set offer button"); 
-  signalclient.onReceive(caller, "offer", remotesdp.value);
+  signalclient.onReceive(caller, "dummy", "dummy", "offer", remotesdp.value);
 }
 void onSetAnswerButton(html.MouseEvent event) {
   print("--clicked set answer button¥n"+ remotesdp.value); 
-  signalclient.onReceive(caller, "answer", remotesdp.value);
+  signalclient.onReceive(caller, "dummy", "dummy", "answer", remotesdp.value);
 }
 
-class AdapterSignalClient extends hetima.SignalCient {
-  void send(hetima.Caller caller, String toUUid, String from, String type, String data) {
+class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
+  void send(hetima_cl.Caller caller, String toUUid, String from, String type, String data) {
     print("signal client send");
      localsdp.value = data;
   }
-  void onReceive(hetima.Caller caller, String type, String data) {
+  void onReceive(hetima_cl.Caller caller, String to, String from, String type, String data) {
     print("onreceive " + type+","+data);
-    super.onReceive(caller, type, data);
+    super.onReceive(caller, to, from, type, data);
   }
 }
