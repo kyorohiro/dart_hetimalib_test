@@ -2,12 +2,11 @@ import 'dart:html' as html;
 import 'package:hetima/hetima.dart'as hetima_common;
 import 'package:hetima/hetima_cl.dart'as hetima_cl;
 
-hetima_cl.SignalClient client = new hetima_cl.SignalClient();
-hetima_cl.Caller caller = new hetima_cl.Caller("test");
-AdapterSignalClient signalclient = new AdapterSignalClient();
 String myuuid = hetima_common.Uuid.createUUID();
+hetima_cl.SignalClient client = new hetima_cl.SignalClient();
+AdapterSignalClient signalclient = new AdapterSignalClient();
 html.SelectElement selectElement = new html.Element.select();
-
+hetima_cl.Caller caller = new hetima_cl.Caller(myuuid);
 
 void main() {
   print(""+ myuuid);
@@ -23,23 +22,15 @@ void main() {
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(selectElement);
   html.document.body.children.add(new html.Element.br());
-
-  html.document.body.children.add(new html.Element.html("<div>local sdp</div>"));
-  html.document.body.children.add(new html.Element.br());
-  html.document.body.children.add(new html.Element.html("<div>remote sdp</div>"));
-  html.document.body.children.add(new html.Element.br());
-
   html.document.body.children.add(offerButton);
   html.document.body.children.add(new html.Element.br());
 
   joinButton.onClick.listen(onClickJoinButton);
   offerButton.onClick.listen(onClickOfferButton);
-  
   caller
   .setSignalClient(signalclient)
   .setTarget("dummy")
   .connect();
-
   client.addEventListener(new SignalClientListenerImple());
 }
 
@@ -79,18 +70,8 @@ void onClickJoinButton(html.MouseEvent event) {
 }
 
 void onClickOfferButton(html.MouseEvent event) {
-  print("--clicked offer button");
-  caller.createOffer();
-}
-void onClickAnswerButton(html.MouseEvent event) {
-  print("--clicked answer button");
-  caller.createAnswer();
-}  
-void onSetOfferButton(html.MouseEvent event) {
-  print("--clicked set offer button"); 
-}
-void onSetAnswerButton(html.MouseEvent event) {
-  print("--clicked set answer button¥n"); 
+  print("--clicked offer button "+selectElement.value);
+  caller.setTarget(selectElement.value).createOffer();
 }
 
 class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
