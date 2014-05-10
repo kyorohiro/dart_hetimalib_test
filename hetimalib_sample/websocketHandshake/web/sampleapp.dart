@@ -8,6 +8,8 @@ hetima_cl.SignalClient client = new hetima_cl.SignalClient();
 AdapterSignalClient signalclient = new AdapterSignalClient();
 html.SelectElement selectElement = new html.Element.select();
 html.TextAreaElement receiveMessage = new html.Element.textarea();
+html.TextAreaElement sendMessage = new html.Element.textarea();
+
 hetima_cl.Caller caller = new hetima_cl.Caller(myuuid);
 
 void main() {
@@ -29,6 +31,10 @@ void main() {
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(offerButton);
   html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(new html.Element.html('<div>send</div>'));
+  html.document.body.children.add(sendMessage);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(new html.Element.html('<div>receive</div>'));
   html.document.body.children.add(receiveMessage);
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(sendButton);
@@ -41,7 +47,12 @@ void main() {
   .setSignalClient(signalclient)
   .setTarget("dummy")
   .connect();
+  caller.onReceiveMessage().listen(onReceiveMessage);
   client.addEventListener(new SignalClientListenerImple());
+}
+
+void onReceiveMessage(hetima_cl.MessageInfo info) {
+    receiveMessage.value += info.message;
 }
 
 class SignalClientListenerImple implements hetima_cl.SignalClientListener {
@@ -93,7 +104,8 @@ void onClickOfferButton(html.MouseEvent event) {
 
 void onClickSendButton(html.MouseEvent event) {
   print("--clicked send button "+selectElement.value);
-  caller.sendText("hello");
+  String message = sendMessage.value;
+  caller.sendText(message);
 }
 
 class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
