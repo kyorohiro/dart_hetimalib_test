@@ -10,24 +10,8 @@ packages:
       path: "/Users/kiyohiro/dart/git/dart_hetimalib"
       relative: false
     source: path
-    version: "0.0.002"
-  matcher:
-    description: matcher
+    version: "0.0.003"
+  js:
+    description: js
     source: hosted
-    version: "0.10.0"
-  mock:
-    description: mock
-    source: hosted
-    version: "0.10.0+1"
-  path:
-    description: path
-    source: hosted
-    version: "1.1.0"
-  stack_trace:
-    description: stack_trace
-    source: hosted
-    version: "0.9.3+1"
-  unittest:
-    description: unittest
-    source: hosted
-    version: "0.10.1+2"
+    version: "0.2.2"

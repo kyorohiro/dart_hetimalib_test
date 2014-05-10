@@ -7,6 +7,7 @@ String myuuid = hetima_common.Uuid.createUUID();
 hetima_cl.SignalClient client = new hetima_cl.SignalClient();
 AdapterSignalClient signalclient = new AdapterSignalClient();
 html.SelectElement selectElement = new html.Element.select();
+html.TextAreaElement receiveMessage = new html.Element.textarea();
 hetima_cl.Caller caller = new hetima_cl.Caller(myuuid);
 
 void main() {
@@ -16,7 +17,10 @@ void main() {
   '<input id="joinbutton" type="button" value="join"> ');
   html.Element offerButton = new html.Element.html(
       '<input id="offerbutton" type="button" value="offer"> ');
-
+  receiveMessage.id = "receive";
+  html.Element sendButton = new html.Element.html(
+      '<input id="sendbutton" type="button" value="send"> ');
+ 
   html.document.body.children.add(myid);
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(joinButton);
@@ -25,9 +29,14 @@ void main() {
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(offerButton);
   html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(receiveMessage);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(sendButton);
+  html.document.body.children.add(new html.Element.br());
 
   joinButton.onClick.listen(onClickJoinButton);
   offerButton.onClick.listen(onClickOfferButton);
+  sendButton.onClick.listen(onClickSendButton);
   caller
   .setSignalClient(signalclient)
   .setTarget("dummy")
@@ -80,6 +89,11 @@ void onClickJoinButton(html.MouseEvent event) {
 void onClickOfferButton(html.MouseEvent event) {
   print("--clicked offer button "+selectElement.value);
   caller.setTarget(selectElement.value).createOffer();
+}
+
+void onClickSendButton(html.MouseEvent event) {
+  print("--clicked send button "+selectElement.value);
+  caller.sendText("hello");
 }
 
 class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
