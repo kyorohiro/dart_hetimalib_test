@@ -1,6 +1,5 @@
 name: websocket_handshake
 description: A sample web application
-dependencies:
-  browser: any
+dev_dependencies:
   hetima:
     path: /Users/kiyohiro/dart/git/dart_hetimalib

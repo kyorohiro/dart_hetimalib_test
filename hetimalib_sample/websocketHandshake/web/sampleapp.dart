@@ -108,7 +108,7 @@ class AdapterSignalClient extends hetima_cl.CallerExpectSignalClient {
      }
   }
   void onReceive(hetima_cl.Caller caller, String to, String from, String type, String data) {
-    print("onreceive to="+to+"from="+from+"type="+type+",data="+data);
+    print("onreceive to="+to+"from="+from+"type="+type+",data="+data.substring(0,10));
     super.onReceive(caller, to, from, type, data);
   }
 }
