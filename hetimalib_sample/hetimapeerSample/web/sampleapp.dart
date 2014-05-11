@@ -1,0 +1,87 @@
+import 'dart:html' as html;
+import 'package:hetima/hetima.dart' as hetima_common;
+import 'package:hetima/hetima_cl.dart' as hetima_cl;
+
+html.SelectElement selectElement = new html.Element.select();
+html.TextAreaElement receiveMessage = new html.Element.textarea();
+html.TextAreaElement sendMessage = new html.Element.textarea();
+
+hetima_cl.HetimaPeer peer = new hetima_cl.HetimaPeer();
+
+void main() {
+  print("" + peer.id);
+  html.DivElement myid = new html.Element.html("<div>" + peer.id+ "</div>");
+  html.Element joinButton = new html.Element.html('<input id="joinbutton" type="button" value="join"> ');
+  html.Element offerButton = new html.Element.html('<input id="offerbutton" type="button" value="offer"> ');
+  receiveMessage.id = "receive";
+  html.Element sendButton = new html.Element.html('<input id="sendbutton" type="button" value="send"> ');
+
+  html.document.body.children.add(myid);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(joinButton);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(selectElement);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(offerButton);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(new html.Element.html('<div>send</div>'));
+  html.document.body.children.add(sendMessage);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(new html.Element.html('<div>receive</div>'));
+  html.document.body.children.add(receiveMessage);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(sendButton);
+  html.document.body.children.add(new html.Element.br());
+
+  joinButton.onClick.listen(onClickJoinButton);
+  offerButton.onClick.listen(onClickOfferButton);
+  sendButton.onClick.listen(onClickSendButton);
+  
+  peer.onFindPeer().listen(updateItem);
+  peer.onMessage().listen(onReceiveMessage);
+}
+
+void onReceiveMessage(hetima_cl.MessageInfo info) {
+  receiveMessage.value += info.message;
+}
+
+
+List<String> findedUuidList = new List();
+void updateItem(List<String> newUuidList) {
+  print("##11 :" + newUuidList.length.toString());
+  for (String u in newUuidList) {
+    if (!findedUuidList.contains(u) && peer.id != u) {
+      print("##12:"+u);
+      findedUuidList.add(u);
+    }
+  }
+  for (html.OptionElement l in selectElement.options) {
+    l.remove();
+  }
+  for (int i = 0; i < findedUuidList.length; i++) {
+    html.OptionElement e = new html.Element.option();
+    e.value = findedUuidList[i];
+    e.text = findedUuidList[i];
+    print("##13:");
+    selectElement.append(e);
+  }
+}
+
+void onClickJoinButton(html.MouseEvent event) {
+  print("--clicked test button");
+  peer.connectJoinServer();
+}
+
+void onClickOfferButton(html.MouseEvent event) {
+  print("--clicked offer button " + selectElement.value);
+  if(selectElement.value.length == 0) {
+    return;
+  }
+  peer.connectPeer(selectElement.value);
+}
+
+void onClickSendButton(html.MouseEvent event) {
+  print("--clicked send button " + selectElement.value);
+  peer.sendMessage(selectElement.value, sendMessage.value);
+}
+

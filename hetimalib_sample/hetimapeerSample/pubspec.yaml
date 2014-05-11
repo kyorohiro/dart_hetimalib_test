@@ -1,0 +1,5 @@
+name: hetimapeer_sample
+description: A sample web application
+dependencies:
+  hetima:
+    path: /Users/kiyohiro/dart/git/dart_hetimalib
