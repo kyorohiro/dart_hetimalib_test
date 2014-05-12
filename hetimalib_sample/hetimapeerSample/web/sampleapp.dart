@@ -39,30 +39,30 @@ void main() {
   
   peer.onFindPeer().listen(updateItem);
   peer.onMessage().listen(onReceiveMessage);
+  peer.onStatusChange().listen(onStatusChange);
 }
 
 void onReceiveMessage(hetima_cl.MessageInfo info) {
   receiveMessage.value += info.message;
 }
 
-
-List<String> findedUuidList = new List();
+void onStatusChange(hetima_cl.StatusChangeInfo info) {
+  updateItem(new List<String>());
+}
 void updateItem(List<String> newUuidList) {
   print("##11 :" + newUuidList.length.toString());
-  for (String u in newUuidList) {
-    if (!findedUuidList.contains(u) && peer.id != u) {
-      print("##12:"+u);
-      findedUuidList.add(u);
-    }
-  }
   for (html.OptionElement l in selectElement.options) {
     l.remove();
   }
-  for (int i = 0; i < findedUuidList.length; i++) {
+  List<hetima_cl.PeerInfo> infos = peer.getPeerList();
+  if(infos == null) {
+    return;
+  }
+  for (int i=0;i<infos.length;i++) {
+    hetima_cl.PeerInfo info = infos[i];
     html.OptionElement e = new html.Element.option();
-    e.value = findedUuidList[i];
-    e.text = findedUuidList[i];
-    print("##13:");
+    e.value = info.uuid.toString();
+    e.text = "-"+info.status.toString()+","+info.uuid.toString();
     selectElement.append(e);
   }
 }
