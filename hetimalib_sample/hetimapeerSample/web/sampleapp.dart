@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'dart:convert' as convert;
 import 'package:hetima/hetima.dart' as hetima_common;
 import 'package:hetima/hetima_cl.dart' as hetima_cl;
 
@@ -11,7 +12,7 @@ hetima_cl.HetimaPeer peer = new hetima_cl.HetimaPeer();
 void main() {
   print("" + peer.id);
 
-  html.DivElement myid = new html.Element.html("<div>" + peer.id+ "</div>");
+  html.DivElement myid = new html.Element.html("<div>" + peer.id + "</div>");
   html.Element joinButton = new html.Element.html('<input id="joinbutton" type="button" value="join"> ');
   html.Element findnodeButton = new html.Element.html('<input id="findenode" type="button" value="findnode"> ');
   html.Element offerButton = new html.Element.html('<input id="offerbutton" type="button" value="offer"> ');
@@ -45,7 +46,7 @@ void main() {
   sendButton.onClick.listen(onClickSendButton);
   findnodeButton.onClick.listen(onClickFindnodeButton);
   relayButton.onClick.listen(onClickRelayButton);
-  
+
   peer.onFindPeer().listen(updateItem);
   peer.onMessage().listen(onReceiveMessage);
   peer.onStatusChange().listen(onStatusChange);
@@ -53,6 +54,16 @@ void main() {
 
 void onReceiveMessage(hetima_cl.MessageInfo info) {
   receiveMessage.value += info.message;
+  if (info.pack != null) {
+    print("##"+convert.JSON.encode(info.pack)+"##");
+    if (info.pack["m"] != null) {
+      if (convert.UTF8.decode(info.pack["m"]) == "response") {
+        if (info.pack["v"] is Map && info.pack["v"]["message"] != null) {
+          receiveMessage.value += (convert.UTF8.decode(info.pack["v"]["message"]));
+        }
+      }
+    }
+  }
 }
 
 void onStatusChange(hetima_cl.StatusChangeInfo info) {
@@ -64,16 +75,16 @@ void updateItem(List<String> newUuidList) {
     l.remove();
   }
   List<hetima_cl.PeerInfo> infos = peer.getPeerList();
-  if(infos == null) {
+  if (infos == null) {
     return;
   }
-  for (int i=0;i<infos.length;i++) {
+  for (int i = 0; i < infos.length; i++) {
     hetima_cl.PeerInfo info = infos[i];
     html.OptionElement e = new html.Element.option();
     e.value = info.uuid.toString();
-    e.text = "-"+info.status.toString()+","+info.uuid.toString();
-    if(info.relayCaller != null) {
-      e.text = "relayable-"+e.text;
+    e.text = "-" + info.status.toString() + "," + info.uuid.toString();
+    if (info.relayCaller != null) {
+      e.text = "relayable-" + e.text;
     }
     selectElement.append(e);
   }
@@ -81,7 +92,7 @@ void updateItem(List<String> newUuidList) {
 
 
 void onClickFindnodeButton(html.MouseEvent event) {
-  print("--clicked findnode button "+selectElement.value);
+  print("--clicked findnode button " + selectElement.value);
   peer.requestFindNode(selectElement.value, selectElement.value);
 }
 
@@ -93,17 +104,19 @@ void onClickJoinButton(html.MouseEvent event) {
 void onClickRelayButton(html.MouseEvent event) {
   print("--clicked relay button");
   hetima_cl.PeerInfo info = peer.findPeerFromList(selectElement.value);
-  if(info.relayCaller == null) {
-    if(info.relayCaller == null) {
+  if (info.relayCaller == null) {
+    if (info.relayCaller == null) {
       print("null relay");
     }
   }
-  peer.requestRelayPackage(info.relayCaller.targetUuid, info.uuid, "hello!!");
+  Map pack = {};
+  pack["message"] = "hello";
+  peer.requestRelayPackage(info.relayCaller.targetUuid, info.uuid, pack);
 }
 
 void onClickOfferButton(html.MouseEvent event) {
   print("--clicked offer button " + selectElement.value);
-  if(selectElement.value.length == 0) {
+  if (selectElement.value.length == 0) {
     return;
   }
   peer.connectPeer(selectElement.value);
@@ -113,4 +126,3 @@ void onClickSendButton(html.MouseEvent event) {
   print("--clicked send button " + selectElement.value);
   peer.sendMessage(selectElement.value, sendMessage.value);
 }
-
