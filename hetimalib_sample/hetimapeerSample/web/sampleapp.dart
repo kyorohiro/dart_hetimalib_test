@@ -10,11 +10,14 @@ hetima_cl.HetimaPeer peer = new hetima_cl.HetimaPeer();
 
 void main() {
   print("" + peer.id);
+
   html.DivElement myid = new html.Element.html("<div>" + peer.id+ "</div>");
   html.Element joinButton = new html.Element.html('<input id="joinbutton" type="button" value="join"> ');
+  html.Element findnodeButton = new html.Element.html('<input id="findenode" type="button" value="findnode"> ');
   html.Element offerButton = new html.Element.html('<input id="offerbutton" type="button" value="offer"> ');
   receiveMessage.id = "receive";
   html.Element sendButton = new html.Element.html('<input id="sendbutton" type="button" value="send"> ');
+  html.Element relayButton = new html.Element.html('<input id="relaybutton" type="button" value="relay message"> ');
 
   html.document.body.children.add(myid);
   html.document.body.children.add(new html.Element.br());
@@ -32,10 +35,16 @@ void main() {
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(sendButton);
   html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(findnodeButton);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(relayButton);
+  html.document.body.children.add(new html.Element.br());
 
   joinButton.onClick.listen(onClickJoinButton);
   offerButton.onClick.listen(onClickOfferButton);
   sendButton.onClick.listen(onClickSendButton);
+  findnodeButton.onClick.listen(onClickFindnodeButton);
+  relayButton.onClick.listen(onClickRelayButton);
   
   peer.onFindPeer().listen(updateItem);
   peer.onMessage().listen(onReceiveMessage);
@@ -63,13 +72,33 @@ void updateItem(List<String> newUuidList) {
     html.OptionElement e = new html.Element.option();
     e.value = info.uuid.toString();
     e.text = "-"+info.status.toString()+","+info.uuid.toString();
+    if(info.relayCaller != null) {
+      e.text = "relayable-"+e.text;
+    }
     selectElement.append(e);
   }
+}
+
+
+void onClickFindnodeButton(html.MouseEvent event) {
+  print("--clicked findnode button "+selectElement.value);
+  peer.requestFindNode(selectElement.value, selectElement.value);
 }
 
 void onClickJoinButton(html.MouseEvent event) {
   print("--clicked test button");
   peer.connectJoinServer();
+}
+
+void onClickRelayButton(html.MouseEvent event) {
+  print("--clicked relay button");
+  hetima_cl.PeerInfo info = peer.findPeerFromList(selectElement.value);
+  if(info.relayCaller == null) {
+    if(info.relayCaller == null) {
+      print("null relay");
+    }
+  }
+  peer.requestRelayPackage(info.relayCaller.targetUuid, info.uuid, "hello!!");
 }
 
 void onClickOfferButton(html.MouseEvent event) {
