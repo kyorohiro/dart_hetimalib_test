@@ -50,19 +50,19 @@ void main() {
   peer.onFindPeer().listen(updateItem);
   peer.onMessage().listen(onReceiveMessage);
   peer.onStatusChange().listen(onStatusChange);
+  peer.onRelayPackage().listen(onRelayPackage);
 }
 
 void onReceiveMessage(hetima_cl.MessageInfo info) {
   receiveMessage.value += info.message;
-  if (info.pack != null) {
-    print("##"+convert.JSON.encode(info.pack)+"##");
-    if (info.pack["m"] != null) {
-      if (convert.UTF8.decode(info.pack["m"]) == "response") {
-        if (info.pack["v"] is Map && info.pack["v"]["message"] != null) {
-          receiveMessage.value += (convert.UTF8.decode(info.pack["v"]["message"]));
-        }
-      }
-    }
+}
+
+void onRelayPackage(hetima_cl.RelayPackageInfo info) {
+  if (info.pack == null) {
+    return;
+  }
+  if (info.pack["message"] != null) {
+    receiveMessage.value += (convert.UTF8.decode(info.pack["message"]));
   }
 }
 
