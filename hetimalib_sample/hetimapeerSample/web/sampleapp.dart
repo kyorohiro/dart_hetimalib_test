@@ -19,6 +19,7 @@ void main() {
   receiveMessage.id = "receive";
   html.Element sendButton = new html.Element.html('<input id="sendbutton" type="button" value="send"> ');
   html.Element relayButton = new html.Element.html('<input id="relaybutton" type="button" value="relay message"> ');
+  html.Element relayOfferButton = new html.Element.html('<input id="relayofferbutton" type="button" value="relay offer"> ');
 
   html.document.body.children.add(myid);
   html.document.body.children.add(new html.Element.br());
@@ -27,6 +28,8 @@ void main() {
   html.document.body.children.add(selectElement);
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(offerButton);
+  html.document.body.children.add(new html.Element.br());
+  html.document.body.children.add(relayOfferButton);
   html.document.body.children.add(new html.Element.br());
   html.document.body.children.add(new html.Element.html('<div>send</div>'));
   html.document.body.children.add(sendMessage);
@@ -46,6 +49,7 @@ void main() {
   sendButton.onClick.listen(onClickSendButton);
   findnodeButton.onClick.listen(onClickFindnodeButton);
   relayButton.onClick.listen(onClickRelayButton);
+  relayOfferButton.onClick.listen(onClickRelayOfferButton);
 
   peer.onFindPeer().listen(updateItem);
   peer.onMessage().listen(onReceiveMessage);
@@ -69,6 +73,7 @@ void onRelayPackage(hetima_cl.RelayPackageInfo info) {
 void onStatusChange(hetima_cl.StatusChangeInfo info) {
   updateItem(new List<String>());
 }
+
 void updateItem(List<String> newUuidList) {
   print("##11 :" + newUuidList.length.toString());
   for (html.OptionElement l in selectElement.options) {
@@ -113,6 +118,20 @@ void onClickRelayButton(html.MouseEvent event) {
   pack["message"] = "hello";
   peer.requestRelayPackage(info.relayCaller.targetUuid, info.uuid, pack);
 }
+
+void onClickRelayOfferButton(html.MouseEvent event) {
+  print("--clicked relay offer button");
+  hetima_cl.PeerInfo info = peer.findPeerFromList(selectElement.value);
+  if (info.relayCaller == null) {
+    if (info.relayCaller == null) {
+      print("null relay");
+    }
+  }
+  Map pack = {};
+  pack["message"] = "hello";
+  peer.requestRelayConnectPeer(info.relayCaller.targetUuid, info.uuid);
+}
+
 
 void onClickOfferButton(html.MouseEvent event) {
   print("--clicked offer button " + selectElement.value);
