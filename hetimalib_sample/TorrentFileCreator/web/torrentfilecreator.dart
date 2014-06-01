@@ -35,6 +35,11 @@ void main() {
   fileSelector.onChange.listen((html.Event e){
     for(html.File f in fileSelector.files) {
       print("==" + f.name);
+      createTorrent(f,
+          announceField.value,
+          nameField.value,
+          result);
+      break;
     }
   });
   drugdtopTag.style.width = "100px";
@@ -70,12 +75,3 @@ void createTorrent(html.File f, String announce, String name,
   print("=4=" + f.toString());
 }
 
-String createTorrentFileInfo(type.Uint8List buffer) {
-  print("==torrent info");
-  try {
-    Object o = hetima.Bencode.decode(buffer);
-    return "ok:"+convert.JSON.encode(o);
-  } catch(E) {
-    return "error:"+E.toString();
-  }
-}
