@@ -7254,7 +7254,7 @@ var $$ = {};
     t2 = t1.get$onDragOver(drugdtopTag);
     H.setRuntimeTypeInfo(new W._EventStreamSubscription(0, t2._target, t2._eventType, W._wrapZone(new O.main_closure0()), t2._useCapture), [H.getTypeArgumentByIndex(t2, 0)])._tryResume$0();
     t2 = J.get$onChange$x(fileSelector);
-    H.setRuntimeTypeInfo(new W._EventStreamSubscription(0, t2._target, t2._eventType, W._wrapZone(new O.main_closure1(fileSelector)), t2._useCapture), [H.getTypeArgumentByIndex(t2, 0)])._tryResume$0();
+    H.setRuntimeTypeInfo(new W._EventStreamSubscription(0, t2._target, t2._eventType, W._wrapZone(new O.main_closure1(fileSelector, result)), t2._useCapture), [H.getTypeArgumentByIndex(t2, 0)])._tryResume$0();
     J.set$width$x(t1.get$style(drugdtopTag), "100px");
     J.set$height$x(drugdtopTag.style, "100px");
     J.set$backgroundColor$x(drugdtopTag.style, "#800080");
@@ -7271,6 +7271,28 @@ var $$ = {};
     t1.children;
     t1.appendChild(W._ElementFactoryProvider_createElement_tag("br", null));
   }, "call$0", "main$closure", 0, 0, 1],
+  read: function(f, result) {
+    var reader, t1, t2, t3, line;
+    reader = new FileReader();
+    reader.readAsArrayBuffer(f);
+    t1 = C.EventStreamProvider_loadend._eventType;
+    t2 = new W._EventStream(reader, t1, false);
+    t2.$builtinTypeInfo = [null];
+    t3 = new W._EventStreamSubscription(0, reader, t1, W._wrapZone(new O.read_closure(result, reader)), false);
+    t3.$builtinTypeInfo = [H.getTypeArgumentByIndex(t2, 0)];
+    t2 = t3._onData;
+    if (t2 != null && t3._pauseCount <= 0)
+      J.addEventListener$3$x(t3._target, t1, t2, false);
+    t1 = J.getInterceptor$x(f);
+    line = C.JSString_methods.$add("=1=", t1.get$name(f));
+    H.printString(line);
+    line = C.JSString_methods.$add("=2=", t1.get$relativePath(f));
+    H.printString(line);
+    line = C.JSString_methods.$add("=3=", f.type);
+    H.printString(line);
+    line = "=4=" + ("Instance of '" + H.Primitives_objectTypeName(f) + "'");
+    H.printString(line);
+  },
   createTorrentFileInfo: function(buffer) {
     var o, $E, t1, exception;
     P.print("==torrent info");
@@ -7290,37 +7312,12 @@ var $$ = {};
   main_closure: {
     "^": "Closure:22;result_0",
     call$1: function(e) {
-      var t1, t2, t3, f, reader, t4, t5, line;
+      var t1, t2;
       t1 = J.getInterceptor$x(e);
       t1.stopPropagation$0(e);
       e.preventDefault();
-      for (t1 = C.FileList_methods.get$iterator(t1.get$dataTransfer(e).files), t2 = this.result_0, t3 = C.EventStreamProvider_loadend._eventType; t1.moveNext$0();) {
-        f = t1._current;
-        reader = new FileReader();
-        reader.readAsArrayBuffer(f);
-        t4 = new W._EventStream(reader, t3, false);
-        t4.$builtinTypeInfo = [null];
-        t5 = new W._EventStreamSubscription(0, reader, t3, W._wrapZone(new O.main__closure(t2, reader)), false);
-        t5.$builtinTypeInfo = [H.getTypeArgumentByIndex(t4, 0)];
-        t4 = t5._onData;
-        if (t4 != null && t5._pauseCount <= 0)
-          J.addEventListener$3$x(t5._target, t3, t4, false);
-        t4 = J.getInterceptor$x(f);
-        line = C.JSString_methods.$add("==", t4.get$name(f));
-        H.printString(line);
-        line = C.JSString_methods.$add("==", t4.get$relativePath(f));
-        H.printString(line);
-        line = C.JSString_methods.$add("==", f.type);
-        H.printString(line);
-      }
-    }
-  },
-  main__closure: {
-    "^": "Closure:23;result_1,reader_2",
-    call$1: function(e) {
-      var t1 = this.reader_2;
-      P.print(C.JSString_methods.$add("==", J.get$runtimeType$(C.FileReader_methods.get$result(t1)).toString$0(0)));
-      J.set$value$x(this.result_1, C.JSString_methods.$add("##:", O.createTorrentFileInfo(C.FileReader_methods.get$result(t1))));
+      for (t1 = C.FileList_methods.get$iterator(t1.get$dataTransfer(e).files), t2 = this.result_0; t1.moveNext$0();)
+        O.read(t1._current, t2);
     }
   },
   main_closure0: {
@@ -7331,13 +7328,23 @@ var $$ = {};
     }
   },
   main_closure1: {
-    "^": "Closure:24;fileSelector_3",
+    "^": "Closure:23;fileSelector_1,result_2",
     call$1: function(e) {
-      var t1, line;
-      for (t1 = C.FileList_methods.get$iterator(J.get$files$x(this.fileSelector_3)); t1.moveNext$0();) {
-        line = C.JSString_methods.$add("==", J.get$name$x(t1._current));
+      var t1, t2, f, line;
+      for (t1 = C.FileList_methods.get$iterator(J.get$files$x(this.fileSelector_1)), t2 = this.result_2; t1.moveNext$0();) {
+        f = t1._current;
+        line = C.JSString_methods.$add("==", J.get$name$x(f));
         H.printString(line);
+        O.read(f, t2);
       }
+    }
+  },
+  read_closure: {
+    "^": "Closure:24;result_0,reader_1",
+    call$1: function(e) {
+      var t1 = this.reader_1;
+      P.print(C.JSString_methods.$add("==", J.get$runtimeType$(C.FileReader_methods.get$result(t1)).toString$0(0)));
+      J.set$value$x(this.result_0, C.JSString_methods.$add("##:", O.createTorrentFileInfo(C.FileReader_methods.get$result(t1))));
     }
   }
 },
@@ -7891,8 +7898,8 @@ init.metadata = [{func: "void__void_", void: true, args: [{func: "void_", void: 
 {func: "String__int", ret: P.String, args: [P.$int]},
 {func: "void__Node", void: true, args: [W.Node]},
 {func: "dynamic__MouseEvent", args: [W.MouseEvent]},
-{func: "dynamic__ProgressEvent", args: [W.ProgressEvent]},
 {func: "dynamic__Event", args: [W.Event]},
+{func: "dynamic__ProgressEvent", args: [W.ProgressEvent]},
 ];
 $ = null;
 Isolate = Isolate.$finishIsolateConstructor(Isolate);
