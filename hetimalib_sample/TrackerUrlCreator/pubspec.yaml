@@ -1,0 +1,8 @@
+name: TrackerUrlCreator
+description: A sample Chrome packaged application
+dependencies:
+  chrome: any
+  hetima:
+    git: https://github.com/kyorohiro/dart_hetimalib.git
+transformers:
+- chrome
