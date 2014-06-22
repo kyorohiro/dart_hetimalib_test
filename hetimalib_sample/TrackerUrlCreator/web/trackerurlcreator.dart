@@ -45,8 +45,8 @@ void createTrackerUrl(type.Uint8List torrentfileData, html.TextAreaElement resul
     hetima.TrackerUrl url = new hetima.TrackerUrl();
     torrentfile.createInfoSha1().then((List<int> id){
       url.announce = torrentfile.announce;
-      url.peerID = "";
-      url.infoHashValue = "";
+      url.peerID = hetima.PercentEncode.encode(hetima.PeerIdCreator.createPeerid("-test-"));
+      url.infoHashValue = hetima.PercentEncode.encode(id);
       url.event = hetima.TrackerUrl.VALUE_EVENT_STARTED;
       url.downloaded = 0;
       url.uploaded = 0;
