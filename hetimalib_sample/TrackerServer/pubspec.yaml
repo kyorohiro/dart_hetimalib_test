@@ -1,0 +1,5 @@
+name: TrackerServer
+description: A sample command-line application
+dependencies:
+  hetima:
+    git: https://github.com/kyorohiro/dart_hetimalib.git
