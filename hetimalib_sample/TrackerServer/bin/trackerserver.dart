@@ -11,7 +11,7 @@ void main() {
   Setting setting = new Setting();
   setting.read().then((Map<String, Object> p) {
     hetimasv.TrackerServer server = new hetimasv.TrackerServer();
-    server.address = Setting.getIp(p[Setting.KEY_IP], server.address);
+    server.address = Setting.getIp(p, server.address);
     server.port = Setting.getPort(p, server.port);
     List<String> list = Setting.getHashlist(p);
     for (String p in list) {
