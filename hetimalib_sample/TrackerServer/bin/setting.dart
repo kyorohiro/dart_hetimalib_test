@@ -17,12 +17,13 @@ class Setting {
 
   static List<String> getHashlist(Map<String, Object> p) {
     List list = Bencode.toList(p, Setting.KEY_HASHLIST);
+    List ret = [];
     for(int i=0;i<list.length;i++) {
-      if(!(list[i] is String)) {
-        return [];
+      if(list[i] is Uint8List) {
+        ret.add(conv.UTF8.decode(list[i]));
       }
     }
-    return list;
+    return ret;
   }
 
   Future<Map<String, Object>> read() {
