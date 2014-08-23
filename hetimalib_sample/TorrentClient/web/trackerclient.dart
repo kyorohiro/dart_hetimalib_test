@@ -23,11 +23,13 @@ void main() {
     startServer();
   });
   fileSelector.onChange.listen((html.Event e) {
-    html.File file = null;
+    memoField.innerHtml = "";
+    html.File file = null;   
     for (html.File f in fileSelector.files) {
       file =f;
       print("==" + f.name);
       memoField.appendText("==" + f.name);
+      memoField.appendHtml("<br>");
       break;
     }
     if(file == null) {return;}
@@ -40,7 +42,8 @@ void main() {
         for(Object k in dict.keys) {
           if(dict[k] != null) {
             print("="+dict[k].toString());
-            memoField.appendText("==" + dict[k].toString());
+            memoField.appendText("#"+k.toString()+ "=" + dict[k].toString()+"");
+            memoField.appendHtml("<br>");
           }
         }
       }
