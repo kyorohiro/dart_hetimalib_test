@@ -1,0 +1,30 @@
+{
+  "name": "TrackerClient",
+  "version": "1",
+  
+  "manifest_version": 2,
+  
+  "icons": {"128": "dart_icon.png"},
+  
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "sockets": {
+        "udp": {
+            "send": "*"
+        },
+        "tcp": {
+            "connect": "*"
+        },
+        "tcpServer": {
+            "listen": "*"
+        }
+    },
+  "permissions": [
+    {"socket": [
+      "tcp-listen","tcp-connect:*:*"
+    ]}
+  ]
+}
