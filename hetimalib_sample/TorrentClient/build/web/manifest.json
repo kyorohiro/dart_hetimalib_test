@@ -11,10 +11,20 @@
       "scripts": ["background.js"]
     }
   },
+  "sockets": {
+        "udp": {
+            "send": "*"
+        },
+        "tcp": {
+            "connect": "*"
+        },
+        "tcpServer": {
+            "listen": "*"
+        }
+    },
   "permissions": [
-    "experimental",
     {"socket": [
-      "tcp-listen"
+      "tcp-listen","tcp-connect:*:*"
     ]}
   ]
 }

@@ -9,5 +9,5 @@ import 'dart:async' as async;
 part 'signal/signalserver.dart';
 part 'net/httpserver.dart';
 part 'tracker/trackerserver.dart';
-part 'tracker/trackerclient.dart';
+part 'tracker/trackerclient_sv.dart';
 part 'torrent/torrentclient.dart';

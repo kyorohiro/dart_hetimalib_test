@@ -15,20 +15,38 @@ class TrackerResponse {
   }
 
   TrackerResponse.bencode(data.Uint8List contents) {
-    Map<String,Object> c = Bencode.decode(contents);
+    Map<String, Object> c = Bencode.decode(contents);
+    initFromMap(c);
+  }
+
+  static async.Future<TrackerResponse> createFromContent(HetimaBuilder builder) {
+    async.Completer<TrackerResponse> completer = new async.Completer();
+    EasyParser parser = new EasyParser(builder);
+    HetiBencode.decode(parser).then((Object o) {
+      Map<String, Object> c = o;
+      TrackerResponse instance = new TrackerResponse();
+      instance.initFromMap(c);
+      completer.complete(instance);
+    }).catchError((e) {
+      completer.completeError(e);
+    });
+    return completer.future;
+  }
+
+  initFromMap(Map<String, Object> c) {
     interval = c[KEY_INTERVAL];
     Object obj = c[KEY_PEERS];
-    
-    if(obj is data.Uint8List) {
-      data.Uint8List wpeers= c[KEY_PEERS];
-      for(int i=0;i<wpeers.length;i+=6) {
-        List<int> wpeer = [wpeers[i+0],wpeers[i+1],wpeers[i+2],wpeers[i+3]];
-        List<int> port = [wpeers[i+4],wpeer[i+5]];
-        peers.add(new PeerAddress([], "", wpeer.toList(), ArrayBuilder.parseInt(port, 0, 2)));        
+
+    if (obj is data.Uint8List) {
+      data.Uint8List wpeers = c[KEY_PEERS];
+      for (int i = 0; i < wpeers.length; i += 6) {
+        List<int> wpeer = [wpeers[i + 0], wpeers[i + 1], wpeers[i + 2], wpeers[i + 3]];
+        List<int> port = [wpeers[i + 4], wpeer[i + 5]];
+        peers.add(new PeerAddress([], "", wpeer.toList(), ByteOrder.parseInt(port, 0, 2)));
       }
     } else {
-      List<Object> wpeers= c[KEY_PEERS];
-      for(Map<String,Object> wpeer in wpeers) {
+      List<Object> wpeers = c[KEY_PEERS];
+      for (Map<String, Object> wpeer in wpeers) {
         data.Uint8List ip = wpeer[KEY_IP];
         data.Uint8List peeerid = wpeer[KEY_PEER_ID];
         int port = wpeer[KEY_PORT];
@@ -37,14 +55,14 @@ class TrackerResponse {
     }
   }
 
-  Map<String,Object> createResponse(bool isCompat) {
+  Map<String, Object> createResponse(bool isCompat) {
     Map ret = new Map();
     ret[KEY_INTERVAL] = interval;
     if (isCompat) {
       ArrayBuilder builder = new ArrayBuilder();
       for (PeerAddress p in peers) {
         builder.appendIntList(p.ip, 0, p.ip.length);
-        builder.appendIntList(ArrayBuilder.parseShortByte(p.port, ArrayBuilder.BYTEORDER_BIG_ENDIAN), 0, 2);
+        builder.appendIntList(ByteOrder.parseShortByte(p.port, ByteOrder.BYTEORDER_BIG_ENDIAN), 0, 2);
       }
       ret[KEY_PEERS] = builder.toUint8List();
     } else {

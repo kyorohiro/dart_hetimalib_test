@@ -26,6 +26,16 @@ class TorrentFile {
     mMetadata = map;
   }
 
+  static async.Future<TorrentFile> createTorrentFileFromTorrentFile(HetimaBuilder builder) {
+    async.Completer<TorrentFile> completer = new async.Completer();
+    HetiBencode.decode(new EasyParser(builder)).then((Object o) {
+      completer.complete(new TorrentFile.torentmap(o));
+    }).catchError((e) {
+      completer.completeError(e);
+    });
+    return completer.future;
+  }
+
   String get announce {
     if (mMetadata.containsKey(KEY_ANNOUNCE)) {
       return objectToString(mMetadata[KEY_ANNOUNCE]);

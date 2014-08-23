@@ -4,10 +4,14 @@ import 'dart:async' as async;
 import 'package:hetima/hetima.dart' as hetima;
 import 'package:hetima/hetima_cl.dart' as hetimacl;
 
+String peerId = "%2D%2D%74%65%73%74%87%E4%36%2A%55%AB%0C%E2%B5%33%C2%4B%79%84";
 hetima.TrackerClient client = new hetima.TrackerClient(new hetimacl.HetiSocketBuilderChrome());
 hetima.TorrentFile torrentFile = null;
 html.LabelElement memoField = null;
 void main() {
+ 
+  print("peerid#"+hetima.PercentEncode.encode(hetima.PeerIdCreator.createPeerid("-test-")));
+  
   
   html.Element startServerButton = new html.Element.html('<input id="startServerButton" type="button" value="startServer"> ');
   html.InputElement fileSelector = new html.Element.html("""<input type="file" id="files" name="file" />""");
@@ -52,7 +56,7 @@ void startDecodeTorrentFile(html.File file) {
   hetima.TorrentFile.createTorrentFileFromTorrentFile(builder).then((hetima.TorrentFile f) {
     memoField.appendText("#"+f.mMetadata.toString());
     memoField.appendHtml("<br>");
-    
+    torrentFile = f;
   }).catchError((e) {
     print("= parsr error");
     memoField.appendText("= parser error");
@@ -83,10 +87,20 @@ void startServer() {
 
 void requestTracker(hetima.TorrentFile file) {
   print("request tracker");
+  if(torrentFile == null) {
+    return;
+  }
   hetima.TrackerClient client = new hetima.TrackerClient(new hetimacl.HetiSocketBuilderChrome());
   client.event = hetima.TrackerUrl.VALUE_EVENT_STARTED;
+  client.peerID = peerId;
+
   client.updateFromMetaData(file).then((v){
     return client.request();
   }).then((hetima.TrackerRequestResult req) {
+    if(hetima.TrackerRequestResult.OK == req.code) {
+      print("request tracker ok");
+    } else {
+      print("request tracker error");      
+    }
   });
 }

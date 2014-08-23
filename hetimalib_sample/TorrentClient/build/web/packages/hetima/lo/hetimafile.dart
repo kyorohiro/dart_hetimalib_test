@@ -1,8 +1,13 @@
 part of hetima;
 
-abstract class HetimaFile {
+abstract class HetimaFile extends HetimaReadBuffer {
   async.Future<int> getLength();
   async.Future<WriteResult> write(Object buffer, int start);
+  async.Future<ReadResult> read(int start, int end);
+}
+
+abstract class HetimaReadBuffer {
+  async.Future<int> getLength();
   async.Future<ReadResult> read(int start, int end);
 }
 

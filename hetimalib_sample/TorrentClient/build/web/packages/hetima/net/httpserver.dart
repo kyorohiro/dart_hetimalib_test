@@ -52,6 +52,7 @@ class HttpServer {
       } else {
         res.headers.set("Content-Type", "text/plain");
       }
+      res.headers.set("Content-Length", buffer.length);
       res.add(buffer);
       res.close();
     });
