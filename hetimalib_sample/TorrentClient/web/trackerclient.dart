@@ -98,7 +98,19 @@ void requestTracker(hetima.TorrentFile file) {
     return client.request();
   }).then((hetima.TrackerRequestResult req) {
     if(hetima.TrackerRequestResult.OK == req.code) {
+      memoField.innerHtml = "";
+      memoField.appendHtml("request tracker ok");
+      memoField.appendHtml("<br>");
+      memoField.appendHtml("#interval="+req.response.interval.toString());
+      memoField.appendHtml("<br>");
       print("request tracker ok");
+      print("#interval="+req.response.interval.toString());
+
+      for(hetima.PeerAddress pa in req.response.peers) {
+        print("#pa="+pa.ipAsString+","+pa.portdAsString);
+        memoField.appendHtml("#pa="+pa.ipAsString+","+pa.portdAsString);
+        memoField.appendHtml("<br>");
+      }
     } else {
       print("request tracker error");      
     }
