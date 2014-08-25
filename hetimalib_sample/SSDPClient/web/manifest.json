@@ -1,0 +1,33 @@
+{
+  "name": "SSDPClient",
+  "version": "1",
+  
+  "manifest_version": 2,
+  
+  "icons": {"128": "dart_icon.png"},
+  
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "sockets": {
+        "udp": {
+            "send": ["*:*"],
+            "bind": ["*:*"],
+            "multicastMembership": ""
+        },
+        "tcp": {
+            "connect": "*"
+        },
+        "tcpServer": {
+            "listen": "*"
+        }
+    }, 
+  "permissions": [
+    "storage",
+    {
+      "socket": ["udp-send-to", "udp-bind", "udp-multicast-membership"]
+    }
+  ]
+}
