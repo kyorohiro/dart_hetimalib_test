@@ -27,7 +27,7 @@
   "permissions": [
     "storage",
     {
-      "socket": ["udp-send-to", "udp-bind", "udp-multicast-membership"]
+      "socket": ["udp-send-to", "udp-bind", "udp-multicast-membership","tcp-listen","tcp-connect:*:*"]
     }
   ]
 }
