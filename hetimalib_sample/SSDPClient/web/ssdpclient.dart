@@ -4,6 +4,7 @@ import 'package:chrome/chrome_app.dart' as chrome;
 import 'package:hetima/hetima.dart' as hetima;
 import 'package:hetima/hetima_cl.dart' as hetimacl;
 SSDP ssdp = new SSDP();
+
 html.LabelElement memoField = null;
 void main() {
   html.Element requestDiscover = new html.Element.html('<input id="requestDiscoverButton" type="button" value="requestDiscover"> ');
@@ -42,32 +43,22 @@ class SSDP {
   static String SSDP_ADDRESS = "239.255.255.250";
   static int SSDP_PORT = 1900;
   static String SSDP_M_SEARCH = """M-SEARCH * HTTP/1.1\r\n""" + """MX: 3\r\n""" + """HOST: 239.255.255.250:1900\r\n""" + """MAN: "ssdp:discover"\r\n""" + """ST: upnp:rootdevice\r\n""" + """\r\n""";
-  chrome.CreateInfo i = null;
 
   List<String> locationList = new List();
+  hetima.HetiUdpSocket socket = null;
   void init() {
     memoField.innerHtml = "";
-    chrome.sockets.udp.onReceive.listen(onReceive);
-    chrome.sockets.udp.create().then((chrome.CreateInfo info) {
-      i = info;
-        return chrome.sockets.udp.setMulticastLoopbackMode(i.socketId, false);
-      }).then((int v) {
-      return chrome.sockets.udp.bind(i.socketId, "0.0.0.0", 0);
-      //}).then((int v){
-      // return chrome.sockets.udp.joinGroup(i.socketId, "239.255.255.250");
-    }).then((int v) {
-      memoField.appendHtml("created udp socket");
-    }).catchError((e){
-      memoField.appendHtml("failed to created udp socket");
-    });
+    hetimacl.HetiSocketBuilderChrome builder = new hetimacl.HetiSocketBuilderChrome();
+    socket = builder.createUdpClient();
+    socket.bind("0.0.0.0", 0);
+    socket.onReceive().listen(onReceive);
   }
 
-  void onReceive(chrome.ReceiveInfo info) {
+  void onReceive(hetima.HetiReceiveUdpInfo info) {
     print("########");
-    print("" + convert.UTF8.decode(info.data.getBytes()));
-
+    print("" + convert.UTF8.decode(info.data));
     print("########");
-    extractLocation(info.data.getBytes());
+    extractLocation(info.data);
   }
 
   void extractLocation(List<int> buffer) {
@@ -140,10 +131,9 @@ class SSDP {
 
   void send() {
     memoField.innerHtml = "";
-    chrome.ArrayBuffer buffer = new chrome.ArrayBuffer.fromBytes(convert.UTF8.encode(SSDP_M_SEARCH));
-    chrome.sockets.udp.send(i.socketId, buffer, SSDP_ADDRESS, SSDP_PORT).then((chrome.SendInfo iii) {
+    socket.send(convert.UTF8.encode(SSDP_M_SEARCH), SSDP_ADDRESS, SSDP_PORT)
+    .then((hetima.HetiUdpSendInfo iii) {
       print("###send=" + iii.resultCode.toString());
     });
-    //ssdpclient.dart.js
   }
 }
