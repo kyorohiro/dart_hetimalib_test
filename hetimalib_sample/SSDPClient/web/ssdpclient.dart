@@ -87,20 +87,7 @@ class SSDP {
     for(String location in locationList) {
       hetima.HetiHttpClient client = new hetima.HetiHttpClient(new hetimacl.HetiSocketBuilderChrome());
       hetima.HttpUrl url = hetima.HttpUrlDecoder.decodeUrl(location);
-      client.connect(url.host, url.port).then((int d) {
-/*      if(url.query.length != 0) {
-        client.get(url.path+"?"+url.query).then((hetima.HetiHttpClientResponse res) {
-          res.body.onFin().then((b){
-            res.body.getLength().then((int length) {
-              res.body.getByteFuture(0, length).then((List<int> v) {
-                  print(""+convert.UTF8.decode(v));                
-              });
-            });
-          });
-        }).catchError((e){
-          print("##err SDFSDf");          
-        });
-      } else */{
+      client.connect(url.host, url.port).then((int d) {{
         client.get(url.path).then((hetima.HetiHttpClientResponse res) {
           hetima.HetiHttpResponseHeaderField field = res.message.find(hetima.RfcTable.HEADER_FIELD_CONTENT_LENGTH);
           if(field != null&& 0<field.fieldValue.length) {

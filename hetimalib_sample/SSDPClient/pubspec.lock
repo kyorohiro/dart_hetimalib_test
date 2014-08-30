@@ -8,7 +8,7 @@ packages:
   chrome:
     description: chrome
     source: hosted
-    version: "0.6.0"
+    version: "0.6.3"
   collection:
     description: collection
     source: hosted
