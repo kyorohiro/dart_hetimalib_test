@@ -4,7 +4,7 @@ import 'package:chrome/chrome_app.dart' as chrome;
 import 'package:hetima/hetima.dart' as hetima;
 import 'package:hetima/hetima_cl.dart' as hetimacl;
 
-hetima.UpnpPortMapping ssdp = new hetima.UpnpPortMapping(new hetimacl.HetiSocketBuilderChrome());
+hetima.UpnpDeviceSearcher ssdp = new hetima.UpnpDeviceSearcher(new hetimacl.HetiSocketBuilderChrome());
 
 html.LabelElement memoField = null;
 void main() {
@@ -33,7 +33,7 @@ void main() {
   });
   getServiceButton.onClick.listen((html.MouseEvent e) {
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
-      ssdp.extractService(deviceInfo);
+      deviceInfo.extractService();
     }
   });
 
