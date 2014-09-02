@@ -10,7 +10,7 @@ html.LabelElement memoField = null;
 void main() {
   html.Element requestDiscover = new html.Element.html('<input id="requestDiscoverButton" type="button" value="requestDiscover"> ');
   html.Element bindjoinNetwork = new html.Element.html('<input id="bindjoinNetworkButton" type="button" value="bindjoinNetwork"> ');
-  html.Element getServiceButton = new html.Element.html('<input id="getServiceNetworkButton" type="button" value="getServiceNetwork"> ');
+  html.Element getServiceButton = new html.Element.html('<input id="requestMyIPButton" type="button" value="requestMyIP"> ');
 
   memoField = new html.LabelElement();
   html.document.body.append(new html.Element.html("<div>### </div>"));
@@ -33,7 +33,8 @@ void main() {
   });
   getServiceButton.onClick.listen((html.MouseEvent e) {
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
-      deviceInfo.extractService();
+      hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
+      pppDevice.requestGetExternalIPAddress();
     }
   });
 
