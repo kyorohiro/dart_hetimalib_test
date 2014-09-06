@@ -10,15 +10,21 @@ hetima.UpnpDeviceSearcher ssdp = new hetima.UpnpDeviceSearcher(new hetimacl.Heti
 html.LabelElement deviceInfoMemo = null;
 html.LabelElement addressInfoMemo = null;
 html.LabelElement localAddressInfoMemo = null;
+html.LabelElement portMappingResultInfoMemo = null;
+
+String localAddress = "";
 void main() {
   html.Element bindjoinNetwork = new html.Element.html('<input id="bindjoinNetworkButton" type="button" value="[1]bindjoinNetwork"> ');
   html.Element requestDiscover = new html.Element.html('<input id="requestDiscoverButton" type="button" value="[2]requestDiscover"> ');
   html.Element getServiceButton = new html.Element.html('<input id="requestMyIPButton" type="button" value="[3]requestMyIP"> ');
   html.Element getLocalAddressButton = new html.Element.html('<input id="testButton" type="button" value="[4]getLocalAddress"> ');
+  html.Element setPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]setPort"> ');
+  html.Element delPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]delPort"> ');
 
   deviceInfoMemo = new html.LabelElement();
   addressInfoMemo = new html.LabelElement();
   localAddressInfoMemo = new html.LabelElement();
+  portMappingResultInfoMemo = new html.LabelElement();
 
   html.document.body.append(new html.Element.html("<div>### </div>"));
   html.document.body.append(bindjoinNetwork);
@@ -39,8 +45,15 @@ void main() {
   html.document.body.append(localAddressInfoMemo);
   html.document.body.append(new html.Element.html("<div>### </div>"));
 
+  html.document.body.append(setPortButton);
+  html.document.body.append(delPortButton);
+  html.document.body.append(new html.Element.html("<div>### </div>"));
+  html.document.body.append(portMappingResultInfoMemo);
+  html.document.body.append(new html.Element.html("<div>### </div>"));
+
+  
   ssdp.onReceive().listen((hetima.UPnpDeviceInfo info) {
-    deviceInfoMemo.text = "device:"+info.getValue(hetima.UPnpDeviceInfo.KEY_LOCATION, "not found");
+    deviceInfoMemo.text = "device:" + info.getValue(hetima.UPnpDeviceInfo.KEY_LOCATION, "not found");
   });
   bindjoinNetwork.onClick.listen((html.MouseEvent e) {
     ssdp.init();
@@ -52,28 +65,50 @@ void main() {
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestGetExternalIPAddress().then((String v) {
-        print("v="+v);
-        addressInfoMemo.text = "address:"+v;
+        print("v=" + v);
+        addressInfoMemo.text = "address:" + v;
       });
     }
   });
 
   getLocalAddressButton.onClick.listen((html.MouseEvent e) {
-    chrome.system.network.getNetworkInterfaces().then((List<chrome.NetworkInterface> nl){
-      for(chrome.NetworkInterface i in nl) {
-        print("address:"+i.address);
-        print("name:"+i.name);
-        print("name:"+i.prefixLength.toString());
+    chrome.system.network.getNetworkInterfaces().then((List<chrome.NetworkInterface> nl) {
+      for (chrome.NetworkInterface i in nl) {
+        print("address:" + i.address);
+        print("name:" + i.name);
+        print("name:" + i.prefixLength.toString());
       }
-      for(chrome.NetworkInterface i in nl) {
-      if(i.prefixLength == 24) {
-        localAddressInfoMemo.text = i.address;
-        break;
-      }
+      for (chrome.NetworkInterface i in nl) {
+        if (i.prefixLength == 24) {
+          localAddressInfoMemo.text = i.address;
+          localAddress = i.address;
+          break;
+        }
       }
     });
     DummyServer server = new DummyServer();
     server.startServer();
+  });
+
+  setPortButton.onClick.listen((html.MouseEvent e) {
+    for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
+      hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
+      pppDevice.requestAddPortMapping(
+          48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP,
+          8083, localAddress, 
+          hetima.UPnpPPPDevice.VALUE_ENABLE, "test", 0).then((int v){
+        portMappingResultInfoMemo.text = "portMappingResult:add:" + v.toString();
+      });
+    }
+  });
+  
+  delPortButton.onClick.listen((html.MouseEvent e) {
+    for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
+      hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
+      pppDevice.requestDeletePortMapping(48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP).then((int v){
+        portMappingResultInfoMemo.text = "portMappingResult:del:" + v.toString();
+      });
+    }
   });
 }
 
@@ -82,16 +117,15 @@ class DummyServer {
     hetimacl.HetiSocketBuilderChrome builder = new hetimacl.HetiSocketBuilderChrome();
     builder.startServer("0.0.0.0", 8083).then((hetima.HetiServerSocket serverSocket) {
       serverSocket.onAccept().listen((hetima.HetiSocket socket) {
-      //  new async.Future.delayed(new Duration(milliseconds: 100),() {
+        //  new async.Future.delayed(new Duration(milliseconds: 100),() {
         socket.onReceive().listen((hetima.HetiReceiveInfo info) {
           socket.send(convert.UTF8.encode("hello")).then((hetima.HetiSendInfo i) {
-             socket.close();
-           });          
+            socket.close();
+          });
         });
-      //  });
-      });       
+        //  });
+      });
     });
   }
 }
-
 
