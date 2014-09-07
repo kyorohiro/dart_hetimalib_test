@@ -20,6 +20,7 @@ void main() {
   html.Element getLocalAddressButton = new html.Element.html('<input id="testButton" type="button" value="[4]getLocalAddress"> ');
   html.Element setPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]setPort"> ');
   html.Element delPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]delPort"> ');
+  html.Element gelPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]gelPort"> ');
 
   deviceInfoMemo = new html.LabelElement();
   addressInfoMemo = new html.LabelElement();
@@ -47,6 +48,8 @@ void main() {
 
   html.document.body.append(setPortButton);
   html.document.body.append(delPortButton);
+  html.document.body.append(gelPortButton);
+
   html.document.body.append(new html.Element.html("<div>### </div>"));
   html.document.body.append(portMappingResultInfoMemo);
   html.document.body.append(new html.Element.html("<div>### </div>"));
@@ -107,6 +110,14 @@ void main() {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestDeletePortMapping(48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP).then((int v){
         portMappingResultInfoMemo.text = "portMappingResult:del:" + v.toString();
+      });
+    }
+  });
+  gelPortButton.onClick.listen((html.MouseEvent e) {
+    for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
+      hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
+      pppDevice.requestGetGenericPortMapping(0).then((String s) {
+        portMappingResultInfoMemo.text = "portMappingResult:get:"+ s;        
       });
     }
   });
