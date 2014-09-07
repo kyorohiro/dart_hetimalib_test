@@ -116,8 +116,8 @@ void main() {
   gelPortButton.onClick.listen((html.MouseEvent e) {
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
-      pppDevice.requestGetGenericPortMapping(0).then((String s) {
-        portMappingResultInfoMemo.text = "portMappingResult:get:"+ s;        
+      pppDevice.requestGetGenericPortMapping(0).then((hetima.UPnpGetGenericPortMappingResponse s) {
+        portMappingResultInfoMemo.text = "portMappingResult:get:"+ s.toString();        
       });
     }
   });
