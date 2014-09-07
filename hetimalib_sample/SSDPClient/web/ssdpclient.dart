@@ -5,7 +5,7 @@ import 'package:chrome/chrome_app.dart' as chrome;
 import 'package:hetima/hetima.dart' as hetima;
 import 'package:hetima/hetima_cl.dart' as hetimacl;
 
-hetima.UpnpDeviceSearcher ssdp = new hetima.UpnpDeviceSearcher(new hetimacl.HetiSocketBuilderChrome());
+hetima.UpnpDeviceSearcher ssdp = null;
 
 html.LabelElement deviceInfoMemo = null;
 html.LabelElement addressInfoMemo = null;
@@ -21,6 +21,13 @@ void main() {
   html.Element setPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]setPort"> ');
   html.Element delPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]delPort"> ');
   html.Element gelPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]gelPort"> ');
+
+  hetima.UpnpDeviceSearcher.createInstance(new hetimacl.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
+    ssdp = searcher;
+    ssdp.onReceive().listen((hetima.UPnpDeviceInfo info) {
+      deviceInfoMemo.text = "device:" + info.getValue(hetima.UPnpDeviceInfo.KEY_LOCATION, "not found");
+    });
+  });
 
   deviceInfoMemo = new html.LabelElement();
   addressInfoMemo = new html.LabelElement();
@@ -55,16 +62,17 @@ void main() {
   html.document.body.append(new html.Element.html("<div>### </div>"));
 
   
-  ssdp.onReceive().listen((hetima.UPnpDeviceInfo info) {
-    deviceInfoMemo.text = "device:" + info.getValue(hetima.UPnpDeviceInfo.KEY_LOCATION, "not found");
-  });
-  bindjoinNetwork.onClick.listen((html.MouseEvent e) {
-    ssdp.init();
-  });
+
   requestDiscover.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     ssdp.searchWanPPPDevice();
   });
   getServiceButton.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestGetExternalIPAddress().then((String v) {
@@ -75,6 +83,9 @@ void main() {
   });
 
   getLocalAddressButton.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     chrome.system.network.getNetworkInterfaces().then((List<chrome.NetworkInterface> nl) {
       for (chrome.NetworkInterface i in nl) {
         print("address:" + i.address);
@@ -94,6 +105,9 @@ void main() {
   });
 
   setPortButton.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestAddPortMapping(
@@ -106,6 +120,9 @@ void main() {
   });
   
   delPortButton.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestDeletePortMapping(48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP).then((int v){
@@ -113,7 +130,11 @@ void main() {
       });
     }
   });
+
   gelPortButton.onClick.listen((html.MouseEvent e) {
+    if(ssdp == null) {
+      return;
+    }
     for (hetima.UPnpDeviceInfo deviceInfo in ssdp.deviceInfoList) {
       hetima.UPnpPPPDevice pppDevice = new hetima.UPnpPPPDevice(deviceInfo);
       pppDevice.requestGetGenericPortMapping(0).then((hetima.UPnpGetGenericPortMappingResponse s) {
