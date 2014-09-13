@@ -13,7 +13,9 @@
   },
   "sockets": {
         "udp": {
-            "send": "*"
+            "send": ["*:*"],
+            "bind": ["*:*"],
+            "multicastMembership": ""
         },
         "tcp": {
             "connect": "*"
@@ -21,10 +23,12 @@
         "tcpServer": {
             "listen": "*"
         }
-    },
+    }, 
   "permissions": [
-    {"socket": [
-      "tcp-listen","tcp-connect:*:*"
-    ]}
+    "storage",
+    {
+      "socket": ["udp-send-to", "udp-bind", "udp-multicast-membership","tcp-listen","tcp-connect:*:*"]
+    },
+    "system.network"
   ]
 }

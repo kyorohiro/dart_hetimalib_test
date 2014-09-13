@@ -69,20 +69,8 @@ void startClient() {
 
 void startServer() {
   print("start server");
-  hetimacl.HetiServerSocketChrome
-  .startServer("127.0.0.1", 8088)
-  .then((hetima.HetiServerSocket socket){
-    socket.onAccept().listen((hetima.HetiSocket socket){
-      socket.onReceive().listen((hetima.HetiReceiveInfo receive){
-        print("receive");
-      });
-      socket.send(conv.UTF8.encode("hello")).then((hetima.HetiSendInfo info){
-        new async.Future.delayed(const Duration(milliseconds: 3*1000),() {
-          socket.close();
-        });
-      });
-    });
-  });
+  hetima.TorrentClient client = new hetima.TorrentClient(new hetimacl.HetiSocketBuilderChrome());
+  client.start();
 }
 
 void requestTracker(hetima.TorrentFile file) {

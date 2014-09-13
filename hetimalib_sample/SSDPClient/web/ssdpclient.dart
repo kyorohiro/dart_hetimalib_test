@@ -14,13 +14,15 @@ html.LabelElement portMappingResultInfoMemo = null;
 
 String localAddress = "";
 void main() {
-  html.Element bindjoinNetwork = new html.Element.html('<input id="bindjoinNetworkButton" type="button" value="[1]bindjoinNetwork"> ');
   html.Element requestDiscover = new html.Element.html('<input id="requestDiscoverButton" type="button" value="[2]requestDiscover"> ');
   html.Element getServiceButton = new html.Element.html('<input id="requestMyIPButton" type="button" value="[3]requestMyIP"> ');
   html.Element getLocalAddressButton = new html.Element.html('<input id="testButton" type="button" value="[4]getLocalAddress"> ');
-  html.Element setPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]setPort"> ');
-  html.Element delPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]delPort"> ');
-  html.Element gelPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]gelPort"> ');
+  html.Element setPortButton = new html.Element.html('<input id="setPortButton" type="button" value="[5]setPort"> ');
+  html.Element delPortButton = new html.Element.html('<input id="delPortButton" type="button" value="[5]delPort"> ');
+  html.Element gelPortButton = new html.Element.html('<input id="gelPortButton" type="button" value="[5]gelPort"> ');
+
+  html.Element testPortButton = new html.Element.html('<input id="testButton" type="button" value="[5]tesetgPort"> ');
+
 
   hetima.UpnpDeviceSearcher.createInstance(new hetimacl.HetiSocketBuilderChrome()).then((hetima.UpnpDeviceSearcher searcher) {
     ssdp = searcher;
@@ -34,8 +36,7 @@ void main() {
   localAddressInfoMemo = new html.LabelElement();
   portMappingResultInfoMemo = new html.LabelElement();
 
-  html.document.body.append(new html.Element.html("<div>### </div>"));
-  html.document.body.append(bindjoinNetwork);
+
 
   html.document.body.append(new html.Element.html("<div>### </div>"));
   html.document.body.append(requestDiscover);
@@ -56,12 +57,11 @@ void main() {
   html.document.body.append(setPortButton);
   html.document.body.append(delPortButton);
   html.document.body.append(gelPortButton);
+  html.document.body.append(testPortButton);
 
   html.document.body.append(new html.Element.html("<div>### </div>"));
   html.document.body.append(portMappingResultInfoMemo);
   html.document.body.append(new html.Element.html("<div>### </div>"));
-
-  
 
   requestDiscover.onClick.listen((html.MouseEvent e) {
     if(ssdp == null) {
@@ -69,6 +69,7 @@ void main() {
     }
     ssdp.searchWanPPPDevice();
   });
+
   getServiceButton.onClick.listen((html.MouseEvent e) {
     if(ssdp == null) {
       return;
@@ -141,6 +142,11 @@ void main() {
         portMappingResultInfoMemo.text = "portMappingResult:get:"+ s.toString();        
       });
     }
+  });
+  
+  testPortButton.onClick.listen((html.MouseEvent e) {
+    hetima.UpnpPortMapping mapping = new hetima.UpnpPortMapping();
+    mapping.addPortMapping(new hetimacl.HetiSocketBuilderChrome(), localAddress, 8083, 48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP);
   });
 }
 

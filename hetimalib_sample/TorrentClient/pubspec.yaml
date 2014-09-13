@@ -4,5 +4,6 @@ dependencies:
   chrome: any
   hetima:
     path: /Users/kiyohiro/dart/git/dart_hetimalib
+  xml: any
 transformers:
 - chrome
