@@ -145,8 +145,9 @@ void main() {
   });
   
   testPortButton.onClick.listen((html.MouseEvent e) {
-    hetima.UpnpPortMapping mapping = new hetima.UpnpPortMapping();
-    mapping.addPortMapping(new hetimacl.HetiSocketBuilderChrome(), localAddress, 8083, 48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP);
+    hetima.UpnpPortMappingSample mapping = new hetima.UpnpPortMappingSample(new hetimacl.HetiSocketBuilderChrome());
+    mapping
+    .addPortMapping(localAddress, 8083, 48083, hetima.UPnpPPPDevice.VALUE_PORT_MAPPING_PROTOCOL_TCP);
   });
 }
 
